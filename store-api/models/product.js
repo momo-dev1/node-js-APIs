@@ -24,7 +24,7 @@ const ProductSchema = new Schema({
     company: {
         type: String,
         enum: {
-            values: ['ikea', 'liddy', 'caressa', 'marcos'], 
+            values: ['ikea', 'liddy', 'caressa', 'marcos'],
             message: '{VALUE} is not supported',
         }
     },

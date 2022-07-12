@@ -1,21 +1,15 @@
-/*
-    @desc    Get   specific category by id
-    @route   POST   /api/v1/categories/:id
-    @access  Public
-*/
-const register = asyncHnadler(async (req, res) => {
+const User = require("../models/user")
+const { StatusCodes } = require('http-status-codes');
 
-})
-
-
-/*
-    @desc    Get   specific category by id
-    @route   POST   /api/v1/categories/:id
-    @access  Public
-*/
-const login = asyncHnadler(async (req, res) => {
-
-})
+const register = async (req, res) => {
+    const user = await User.create({ ...req.body })
+    res.status(StatusCodes.CREATED).json({ user })
+}
 
 
-module.exports = {}
+const login = async (req, res) => {
+    res.status(StatusCodes.CREATED).json({ msg: { ...req.body } })
+}
+
+
+module.exports = { register, login }
