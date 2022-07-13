@@ -40,6 +40,12 @@ UserSchema.pre("save", function (next) {
     });
 });
 
-
+//instance method
+UserSchema.methods.createJWT = function () {
+    const user = this;
+    return jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN
+    });
+}
 
 module.exports = model('User', UserSchema);
