@@ -1,4 +1,6 @@
 const { Schema, model } = require('mongoose')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const UserSchema = new Schema({
     username: {
@@ -19,9 +21,9 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'Please provide a password'],
         minlength: [8, 'Password must be at least 8 characters'],
-        maxlength: [32, 'Password must be at most 32 characters'],
     }
 });
+
 
 
 module.exports = model('User', UserSchema);
