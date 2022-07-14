@@ -40,12 +40,19 @@ UserSchema.pre("save", function (next) {
     });
 });
 
-//instance method
+//instance methods
+
+UserSchema.methods.comparePassword = function (comparedPassword) {
+    const user = this;
+    return bcrypt.compareSync(comparedPassword, user.password);
+}
+
 UserSchema.methods.createJWT = function () {
     const user = this;
     return jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
     });
 }
+
 
 module.exports = model('User', UserSchema);
