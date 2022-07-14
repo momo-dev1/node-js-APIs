@@ -15,12 +15,12 @@ const login = async (req, res) => {
     const user = await User.findOne({ email })
 
     if (!user) {
-        throw badRequest('Invalid email or password')
+        throw new badRequest('Invalid email or password')
     }
     const token = user.comparePassword(password)
 
     if (!token) {
-        throw unauthorized('Invalid credentials')
+        throw new unauthorized('Invalid credentials')
     }
     res.status(StatusCodes.OK).json({ username: user.username, token })
 }
