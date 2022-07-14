@@ -42,9 +42,9 @@ UserSchema.pre("save", function (next) {
 
 //instance methods
 
-UserSchema.methods.comparePassword = function (comparedPassword) {
+UserSchema.methods.comparePassword = async function (comparedPassword) {
     const user = this;
-    return bcrypt.compareSync(comparedPassword, user.password);
+    return await bcrypt.compare(comparedPassword, user.password);
 }
 
 UserSchema.methods.createJWT = function () {
