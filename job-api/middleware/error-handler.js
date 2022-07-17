@@ -1,5 +1,6 @@
 const { CustomAPIError } = require('../errors')
 const { StatusCodes } = require('http-status-codes')
+
 const errorHandlerMiddleware = (err, req, res, next) => {
   let customError = {
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
@@ -14,6 +15,11 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   }
   if (err.name === 'ValidationError') {
     customError.message = object.values(err.errors).map(e => e.message).join('& ')
+    customError.statusCode = 400
+  }
+  if (err.name === 'CastError') {
+    customError.message = `${ err.value } is not a valid ${ err.kind }`
+    customError.statusCode = 404
   }
   return res.status(customError.statusCode).json({ message: customError.message })
 

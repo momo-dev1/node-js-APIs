@@ -2,7 +2,6 @@ const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, notFoundError } = require('../errors');
 const Job = require("../models/job")
 
-
 /*
     @desc    Get   list of all jobs
     @route   GET   /api/v1/jobs
