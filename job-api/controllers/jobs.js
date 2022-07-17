@@ -1,3 +1,5 @@
+const { StatusCodes } = require('http-status-codes');
+const { BadRequestError, notFoundError } = require('../errors');
 const Job = require("../models/job")
 
 
@@ -7,8 +9,8 @@ const Job = require("../models/job")
     @access  Public
 */
 const getAllJobs = async (req, res) => {
-    const categories = await Job.find({})
-    res.status(200).json({ results: getAllCategories.length, data: categories })
+    const jobs = await Job.find({})
+    res.status(StatusCodes.OK).json({ jobs, counts: jobs.length })
 }
 
 /*
@@ -17,9 +19,10 @@ const getAllJobs = async (req, res) => {
     @access  Private
 */
 const createJob = async (req, res) => {
-    const { name } = req.body
-    const job = await Job.create({ name })
-    res.status(201).json({ data: job })
+
+    req.body.createdBy = req.user.userId
+    const job = await Job.create(req.body)
+    res.status(StatusCodes.CREATED).json({ job })
 }
 
 /*
@@ -29,9 +32,9 @@ const createJob = async (req, res) => {
 */
 const getJob = async (req, res) => {
     const { id } = req.params
-    const job = await Job.findById(id)
-    if (!job) return res.status(404).json({ msg: "Job not found" })
-    res.status(200).json({ data: job })
+    const job = await Job.findById({ _id: id })
+    if (!job) return BadRequestError(`No Job match with this ${ id }`)
+    res.status(StatusCodes.OK).json({ job })
 }
 
 /*  @desc    Update   specific job by id
@@ -40,10 +43,14 @@ const getJob = async (req, res) => {
 */
 const updateJob = async (req, res) => {
     const { id } = req.params
-    const { name } = req.body
-    const job = await Job.findByIdAndUpdate({ _id: id }, { name, slug: slugify(name) }, { new: true })
-    if (!job) return res.status(404).json({ msg: "Job not found" })
-    res.status(200).json({ data: job })
+    const { company, position } = req.body
+    const job = await Job.findByIdAndUpdate(
+        { _id: id },
+        { company, position },
+        { new: true, runValidators: true }
+    )
+    if (!job) return BadRequestError(`No Job match with this ${ id }`)
+    res.status(StatusCodes.OK).json({ job })
 }
 
 /*
@@ -54,8 +61,8 @@ const updateJob = async (req, res) => {
 const deleteJob = async (req, res) => {
     const { id } = req.params
     const job = await Job.findByIdAndDelete(id)
-    if (!job) return res.status(404).json({ msg: "Category not found" })
-    res.status(204).json({ msg: "Job has successfully deleted" })
+    if (!job) return BadRequestError(`No Job match with this ${ id }`)
+    res.status(StatusCodes.OK).json({ msg: "Job has successfully deleted" })
 }
 
 module.exports = { getAllJobs, createJob, getJob, updateJob, deleteJob }

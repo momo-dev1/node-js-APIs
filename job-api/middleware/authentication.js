@@ -13,10 +13,13 @@ const authenticationMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const { id, username } = decoded
-        req.user = { id, username } // this will show in protectedRoute as req.user
+        const { userId, username } = decoded
+        // this will show in protectedRoute as req.user
+        req.user = { userId, username }
         next()
     } catch (error) {
         throw new UnauthenticatedError('Not authorized to access this route')
     }
 }
+
+module.exports = authenticationMiddleware
