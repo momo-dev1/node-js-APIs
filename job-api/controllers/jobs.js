@@ -9,8 +9,24 @@ const Job = require("../models/job")
     @access  Public
 */
 const getAllJobs = async (req, res) => {
-    const jobs = await Job.find({})
-    res.status(StatusCodes.OK).json({ jobs, counts: jobs.length })
+    const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt")
+    res.status(StatusCodes.OK).json({ jobs, job_Counts: jobs.length })
+}
+
+/*
+    @desc    Get   specific job by id
+    @route   GET   /api/v1/jobs/:id
+    @access  Public
+*/
+const getJob = async (req, res) => {
+    const { id: jobId } = req.params
+    const { userId } = req.user
+    const job = await Job.findOne({
+        _id: jobId,
+        createdBy: userId
+    })
+    if (!job) throw new notFoundError(`No Job match with this id: ${ jobId }`)
+    res.status(StatusCodes.OK).json({ job })
 }
 
 /*
@@ -25,31 +41,24 @@ const createJob = async (req, res) => {
     res.status(StatusCodes.CREATED).json({ job })
 }
 
-/*
-    @desc    Get   specific job by id
-    @route   GET   /api/v1/jobs/:id
-    @access  Public
-*/
-const getJob = async (req, res) => {
-    const { id } = req.params
-    const job = await Job.findById({ _id: id })
-    if (!job) return BadRequestError(`No Job match with this ${ id }`)
-    res.status(StatusCodes.OK).json({ job })
-}
 
 /*  @desc    Update   specific job by id
-    @route   PUT      /api/v1/jobs/:id
+    @route   PATCH      /api/v1/jobs/:id
     @access  Private
 */
 const updateJob = async (req, res) => {
-    const { id } = req.params
+    const { id: jobId } = req.params
+    const { userId } = req.user
     const { company, position } = req.body
+    if (company === "" || position === "") throw new BadRequestError("Company or Position cannot be empty")
+
     const job = await Job.findByIdAndUpdate(
-        { _id: id },
-        { company, position },
+        { _id: jobId, createdBy: userId },
+        req.body,
         { new: true, runValidators: true }
     )
-    if (!job) return BadRequestError(`No Job match with this ${ id }`)
+
+    if (!job) throw new notFoundError(`No Job match with this id: ${ id }`)
     res.status(StatusCodes.OK).json({ job })
 }
 
@@ -59,9 +68,12 @@ const updateJob = async (req, res) => {
     @access  Private
 */
 const deleteJob = async (req, res) => {
-    const { id } = req.params
-    const job = await Job.findByIdAndDelete(id)
-    if (!job) return BadRequestError(`No Job match with this ${ id }`)
+    const { id: jobId } = req.params
+    const { userId } = req.user
+    const job = await Job.findByIdAndDelete({
+        _id: jobId, createdBy: userId,
+    })
+    if (!job) throw new notFoundError(`No Job match with this id: ${ id }`)
     res.status(StatusCodes.OK).json({ msg: "Job has successfully deleted" })
 }
 
