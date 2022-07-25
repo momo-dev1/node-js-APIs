@@ -1,3 +1,3 @@
 # Node-js-APIs
 
-- [Job Api](https://jobs-api-06.herokuapp.com/api-docs/#/) - job api documentation !
+- [Job Api](https://mo-jobs-api-v1.herokuapp.com/docs/) - job api documentation !
