@@ -35,4 +35,20 @@ const login = async (req, res) => {
     res.status(StatusCodes.OK).json({ username: user.username, token })
 }
 
-module.exports = { register, login }
+const updateUser = async (req, res) => {
+    const { username, email, location } = req.body
+    const { userId } = req.user
+
+    if (!username || !email || !location) {
+        throw new BadRequestError('Please provide all required fields')
+    }
+
+    const user = await User.findByIdAndUpdate(
+        userId,
+        { username, email, location },
+        { new: true })
+    const token = user.createJWT()
+    res.status(StatusCodes.OK).json({ username: user.username, location: user.location, token })
+
+}
+module.exports = { register, login, updateUser }
