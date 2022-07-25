@@ -1,7 +1,7 @@
 openapi: 3.0.0
 
 info:
-  title: Jobs Api
+  title: JOBS-API
 
   contact: {}
 
@@ -33,57 +33,26 @@ paths:
               $ref: "#/components/schemas/RegisterRequest"
 
             example:
-              username: momo123
+              username: momo2020
 
-              email: momo@gmail.com
+              email: momo2@gmail.com
 
-              password: "secret123"
+              password: "123123"
 
         required: true
 
       responses:
         "200":
-          description: OK
-
-          headers:
-            x-next:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-
-                  example: aliqua cupidatat ex
-
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Detailsaboutauser"
-
-              example:
-                id: -1013742
-
-                name: cupidatat labore nulla
-
-                tag: do enim mollit ea
-
-        "500":
-          description: Internal Server Error
+          description: ""
 
           headers: {}
 
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/unexpectederror1"
-
-              example:
-                code: 82672049
-
-                message: aliqua commodo nostrud ipsum
-
       deprecated: false
 
-      security: []
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
 
   /auth/login:
     post:
@@ -105,62 +74,73 @@ paths:
               $ref: "#/components/schemas/LoginRequest"
 
             example:
-              username: momo123
-
               email: momo@gmail.com
 
-              password: "secret123"
+              password: secret123
 
         required: true
 
       responses:
         "200":
-          description: OK
-
-          headers:
-            x-next:
-              content:
-                text/plain:
-                  schema:
-                    type: string
-
-                  example: aliqua cupidatat ex
-
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Detailsaboutauser"
-
-              example:
-                id: -1013742
-
-                name: cupidatat labore nulla
-
-                tag: do enim mollit ea
-
-        "500":
-          description: Internal Server Error
+          description: ""
 
           headers: {}
 
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/unexpectederror1"
+      deprecated: false
 
-              example:
-                code: 82672049
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
 
-                message: aliqua commodo nostrud ipsum
+          variables: {}
+
+  /auth/updateUser:
+    patch:
+      tags:
+        - Auth
+
+      summary: updateUser
+
+      operationId: updateUser
+
+      parameters: []
+
+      requestBody:
+        description: ""
+
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+
+            example:
+              username: momo2020
+
+              email: momo@gmail.com
+
+              location: my location
+
+        required: true
+
+      responses:
+        "200":
+          description: ""
+
+          headers: {}
 
       deprecated: false
 
-      security: []
+      security:
+        - bearer: []
+
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
 
   /jobs:
     get:
       tags:
-        - jobs
+        - Jobs
 
       summary: Get All jobs
 
@@ -179,9 +159,14 @@ paths:
       security:
         - bearer: []
 
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
+
     post:
       tags:
-        - jobs
+        - Jobs
 
       summary: Create Job
 
@@ -215,6 +200,11 @@ paths:
       security:
         - bearer: []
 
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
+
   /jobs/{id}:
     parameters:
       - in: path
@@ -223,10 +213,9 @@ paths:
           type: string
         required: true
         description: the job id
-
     get:
       tags:
-        - jobs
+        - Jobs
 
       summary: Get Single Job
 
@@ -245,9 +234,14 @@ paths:
       security:
         - bearer: []
 
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
+
     patch:
       tags:
-        - jobs
+        - Jobs
 
       summary: Update Job
 
@@ -281,9 +275,14 @@ paths:
       security:
         - bearer: []
 
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
+
     delete:
       tags:
-        - jobs
+        - Jobs
 
       summary: Delete Job
 
@@ -301,6 +300,11 @@ paths:
 
       security:
         - bearer: []
+
+      servers:
+        - url: https://mo-jobs-api-v1.herokuapp.com/api/v1
+
+          variables: {}
 
 components:
   schemas:
@@ -327,76 +331,43 @@ components:
           type: string
 
       example:
-        username: momo123
+        username: momo2020
 
-        email: momo@gmail.com
+        email: momo2@gmail.com
 
-        password: "secret123"
-
-    Detailsaboutauser:
-      title: Detailsaboutauser
-
-      required:
-        - id
-
-        - name
-
-        - tag
-
-      type: object
-
-      properties:
-        id:
-          type: integer
-
-          format: int32
-
-        name:
-          type: string
-
-        tag:
-          type: string
-
-      example:
-        id: -1013742
-
-        name: cupidatat labore nulla
-
-        tag: do enim mollit ea
-
-    unexpectederror1:
-      title: unexpectederror1
-
-      required:
-        - code
-
-        - message
-
-      type: object
-
-      properties:
-        code:
-          type: integer
-
-          format: int32
-
-        message:
-          type: string
-
-      example:
-        code: 82672049
-
-        message: aliqua commodo nostrud ipsum
+        password: "123123"
 
     LoginRequest:
       title: LoginRequest
+
+      required:
+        - email
+
+        - password
+
+      type: object
+
+      properties:
+        email:
+          type: string
+
+        password:
+          type: string
+
+      example:
+        email: momo@gmail.com
+
+        password: secret123
+
+    UpdateUserRequest:
+      title: UpdateUserRequest
 
       required:
         - username
 
         - email
 
-        - password
+        - location
 
       type: object
 
@@ -407,15 +378,15 @@ components:
         email:
           type: string
 
-        password:
+        location:
           type: string
 
       example:
-        username: momo123
+        username: momo2020
 
         email: momo@gmail.com
 
-        password: "secret123"
+        location: my location
 
     CreateJobRequest:
       title: CreateJobRequest
@@ -494,8 +465,5 @@ security: []
 tags:
   - name: Auth
 
-  - name: Crud
+  - name: Jobs
 
-  - name: jobs
-
-    description: ""
