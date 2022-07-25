@@ -21,6 +21,13 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'Please provide a password'],
         minlength: [8, 'Password must be at least 8 characters'],
+    },
+    location: {
+        type: String,
+        trim: true,
+        minlength: [3, 'Username must be at least 3 characters'],
+        maxlength: [20, 'Username must be at most 20 characters'],
+        default: 'my location'
     }
 });
 
