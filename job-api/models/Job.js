@@ -17,6 +17,11 @@ const JobSchema = new Schema({
         required: [true, 'Please provide a status'],
         enum: ["applied", "interview", "pending", "hired", "rejected"],
         default: "pending"
+    }, 
+    jobLocation: {
+        type: String,
+        default: 'my city',
+        required: true,
     },
     createdBy: {
         type: Types.ObjectId,
