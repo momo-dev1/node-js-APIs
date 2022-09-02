@@ -10,7 +10,7 @@ const Job = require("../models/job")
 const getAllJobs = async (req, res) => {
     const { userId } = req.user
     const jobs = await Job.find({ createdBy: userId }).sort("createdAt")
-    res.status(StatusCodes.OK).json({ jobs, job_Counts: jobs.length })
+    res.status(StatusCodes.OK).json({ jobs, job_Counts: jobs.length, numOfPages: 1 })
 }
 
 /*
