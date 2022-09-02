@@ -9,7 +9,43 @@ const Job = require("../models/job")
 */
 const getAllJobs = async (req, res) => {
     const { userId } = req.user
-    const jobs = await Job.find({ createdBy: userId }).sort("createdAt")
+    const { status, position, sort, search } = req.query
+
+    const queryObj = {
+        createdBy: userId
+    }
+
+    if (status !== "all") {
+        queryObj.status = status
+    }
+
+    if (position !== "all") {
+        queryObj.position = position
+    }
+
+    if (search) {
+        queryObj.company = { $regex: search, $options: "i" }
+    }
+    const result = Job.find(queryObj)
+
+    switch (sort) {
+        case "latest":
+            result = result.sort("-createdAt")
+            break;
+        case "oldest":
+            result = result.sort("createdAt")
+            break;
+        case "a-z":
+            result = result.sort("company")
+            break;
+        case "z-a":
+            result = result.sort("-company")
+            break;
+        default:
+            result = result
+    }
+
+    const jobs = await result
     res.status(StatusCodes.OK).json({ jobs, job_Counts: jobs.length, numOfPages: 1 })
 }
 
