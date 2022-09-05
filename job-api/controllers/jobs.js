@@ -15,18 +15,18 @@ const getAllJobs = async (req, res) => {
         createdBy: userId
     }
 
-    if (status !== "all") {
+    if (status && status !== "all") {
         queryObj.status = status
     }
 
-    if (position !== "all") {
+    if (position && position !== "all") {
         queryObj.position = position
     }
 
     if (search) {
         queryObj.company = { $regex: search, $options: "i" }
     }
-    const result = Job.find(queryObj)
+    let result = Job.find(queryObj)
 
     switch (sort) {
         case "latest":
@@ -54,6 +54,7 @@ const getAllJobs = async (req, res) => {
 
     const job_Counts = await Job.countDocuments(queryObj)
     const numOfPages = Math.ceil(job_Counts / limit)
+
 
     res.status(StatusCodes.OK).json({ jobs, job_Counts, numOfPages })
 }
