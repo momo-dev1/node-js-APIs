@@ -28,7 +28,8 @@ const UserSchema = new Schema({
         minlength: [3, 'Username must be at least 3 characters'],
         maxlength: [20, 'Username must be at most 20 characters'],
         default: 'my location'
-    }
+    },
+
 });
 
 UserSchema.pre("save", function (next) {

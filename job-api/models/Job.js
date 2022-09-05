@@ -27,6 +27,9 @@ const JobSchema = new Schema({
         type: Types.ObjectId,
         ref: 'User',
         required: [true, 'Please provide a user']
+    },
+    avatarColor: {
+        type: String
     }
 }, { timestamps: true })
 

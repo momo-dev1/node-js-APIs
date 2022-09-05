@@ -82,8 +82,9 @@ const getJob = async (req, res) => {
 */
 const createJob = async (req, res) => {
     req.body.createdBy = req.user.userId
+    const avatarColor = `#${ Math.random().toString(16).substr(-6) }`
 
-    const job = await Job.create(req.body)
+    const job = await Job.create({ ...req.body, avatarColor })
     res.status(StatusCodes.CREATED).json({ job })
 }
 
