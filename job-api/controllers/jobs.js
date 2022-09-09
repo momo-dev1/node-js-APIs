@@ -127,20 +127,36 @@ const deleteJob = async (req, res) => {
 }
 
 /*
-    @desc    Delete    all stats
-    @route   DELETE    /api/v1/jobs/stats
+    @desc    Get    all job stats for user 
+    @route   GET    /api/v1/jobs/stats
     @access  Private
 */
 const getStats = async (req, res) => {
     const { userId } = req.user
-    const stats = await Job.aggregate(
-        [{
-            $match: { createdBy: Types.ObjectId(userId) },
+    let stats = await Job.aggregate(
+        [
+            { $match: { createdBy: Types.ObjectId(userId) } },
+            { $group: { _id: "$status", count: { $sum: 1 } } }
+        ])
 
-        }])
+    // return status as an object
+    stats = stats.reduce((currentStat, stat) => {
+        const { _id: name, count } = stat
+        currentStat[name] = count
+        return currentStat
+    }, {})
+
+    const defaultStats = {
+        applied: stats.applied || 0,
+        interview: stats.interview || 0,
+        pending: stats.pending || 0,
+        hired: stats.hired || 0,
+        rejected: stats.rejected || 0
+    }
+    
     if (!stats) throw new notFoundError(`No Job stats found`)
 
-    res.status(StatusCodes.OK).json({ stats })
+    res.status(StatusCodes.OK).json({ defaultStats })
 }
 
 module.exports = {
