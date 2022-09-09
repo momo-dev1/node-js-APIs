@@ -1,4 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
+const { Types } = require('mongoose');
 const { BadRequestError, notFoundError } = require('../errors');
 const Job = require("../models/job")
 
@@ -44,6 +45,7 @@ const getAllJobs = async (req, res) => {
         default:
             result = result
     }
+
     const page = +req.query.page || 1
     const limit = +req.query.limit || 5
     const skip = (page - 1) * limit
@@ -124,4 +126,28 @@ const deleteJob = async (req, res) => {
     res.status(StatusCodes.OK).json({ msg: "Job has successfully deleted" })
 }
 
-module.exports = { getAllJobs, createJob, getJob, updateJob, deleteJob }
+/*
+    @desc    Delete    all stats
+    @route   DELETE    /api/v1/jobs/stats
+    @access  Private
+*/
+const getStats = async (req, res) => {
+    const { userId } = req.user
+    const stats = await Job.aggregate(
+        [{
+            $match: { createdBy: Types.ObjectId(userId) },
+
+        }])
+    if (!stats) throw new notFoundError(`No Job stats found`)
+
+    res.status(StatusCodes.OK).json({ stats })
+}
+
+module.exports = {
+    getAllJobs,
+    createJob,
+    getJob,
+    updateJob,
+    deleteJob,
+    getStats
+}
