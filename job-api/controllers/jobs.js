@@ -153,10 +153,33 @@ const getStats = async (req, res) => {
         hired: stats.hired || 0,
         rejected: stats.rejected || 0
     }
-    
+
+    let monthlyApplications = await Job.aggregate(
+        [
+            { $match: { createdBy: Types.ObjectId(userId) } },
+            {
+                $group: {
+                    _id: {
+                        year: {
+                            $year: "$createdAt"
+                        },
+                        month: {
+                            $month: "$createdAt"
+                        }
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { "_id.year": -1, "_id.month": -1 } }
+        ])
+    // 
+    const totalStats = Object.values(defaultStats).reduce((currentStat, stat) => {
+        return currentStat + stat;
+    }, 0);
+
     if (!stats) throw new notFoundError(`No Job stats found`)
 
-    res.status(StatusCodes.OK).json({ defaultStats })
+    res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications, totalStats })
 }
 
 module.exports = {
