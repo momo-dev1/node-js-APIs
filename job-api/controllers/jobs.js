@@ -2,7 +2,7 @@ const { StatusCodes } = require('http-status-codes');
 const { Types } = require('mongoose');
 const { BadRequestError, notFoundError } = require('../errors');
 const Job = require("../models/job")
-
+const moment = require('moment');
 /*
     @desc    Get   list of all jobs
     @route   GET   /api/v1/jobs
@@ -172,7 +172,11 @@ const getStats = async (req, res) => {
             },
             { $sort: { "_id.year": -1, "_id.month": -1 } }
         ])
-    // 
+    monthlyApplications = monthlyApplications.map((data) => {
+        const { _id: { year, month }, count } = data
+        const date = moment().month(month - 1).year(year).format("MMM Y")
+        return { date, count }
+    }).reverse()
     const totalStats = Object.values(defaultStats).reduce((currentStat, stat) => {
         return currentStat + stat;
     }, 0);
