@@ -1,39 +1,47 @@
-const { Schema, model, Types } = require('mongoose')
-
-const JobSchema = new Schema({
+import { Schema, model, Types } from "mongoose";
+import { JOB_POSITION, JOB_STATUS, JOB_TYPE } from "../utils/constants.js";
+const JobSchema = new Schema(
+  {
     company: {
-        type: String,
-        required: [true, 'Please provide a company'],
-        maxlength: 50
+      type: String,
+      required: [true, "Please provide a company"],
+      maxlength: 50,
     },
     position: {
-        type: String,
-        required: [true, 'Please provide a position'],
-        enum: ["intern", "junior", "senior", "lead", "manager"],
-        maxlength: 100
+      type: String,
+      required: [true, "Please provide a position"],
+      enum: Object.values(JOB_POSITION),
+      maxlength: 100,
     },
-    status: {
-        type: String,
-        enum: ["applied", "pending", "interview", "hired", "rejected"],
-        default: "pending"
+    jobStatus: {
+      type: String,
+      enum: Object.values(JOB_STATUS),
+      default: JOB_STATUS.PENDING,
     },
-    jobLocation: {
-        type: String,
-        default: 'my city',
+    jobType: {
+      type: String,
+      enum: Object.values(JOB_TYPE),
+      default: JOB_TYPE.FULL_TIME,
+    },
+    location: {
+      type: String,
+      default: "my city",
     },
     skills: {
-        type: [String],
-        required: [true, 'Please provide skills'],
-        default: []
+      type: [String],
+      required: [true, "Please provide skills"],
+      default: [],
     },
     createdBy: {
-        type: Types.ObjectId,
-        ref: 'User',
-        required: [true, 'Please provide a user']
+      type: Types.ObjectId,
+      ref: "User",
+      required: [true, "Please provide a user"],
     },
     avatarColor: {
-        type: String
-    }
-}, { timestamps: true })
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = model('Job', JobSchema)
+export default model("Job", JobSchema);

@@ -1,25 +1,33 @@
-const jwt = require('jsonwebtoken')
-const { UnauthenticatedError } = require('../errors')
+import {
+  UnauthenticatedError,
+  BadRequestError,
+  UnAuthorizedError,
+} from "../errors/index.js";
+import { verifyJWT } from "../utils/tokenUtils.js";
 
+export const authenticateUser = (req, res, next) => {
+  const { token } = req.cookies;
+  if (!token) throw new UnauthenticatedError("authentication invalid");
+  try {
+    const { payload:{userId, role} } = verifyJWT(token);
+    const testUser = userId === "6642b9c5578d32b651959ead";
+    req.user = { userId, role, testUser };
+    next();
+  } catch (error) {
+    throw new UnauthenticatedError("authentication invalid");
+  }
+};
 
-const authenticationMiddleware = (req, res, next) => {
-
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new UnauthenticatedError('No token provided')
+export const authorizePermissions = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      throw new UnAuthorizedError("Unauthorized to access this route");
     }
-    const token = authHeader.split(' ')[1]
+    next();
+  };
+};
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const { userId, username } = decoded
-        // this will show in protectedRoute as req.user
-        req.user = { userId, username }
-        next()
-    } catch (error) {
-        throw new UnauthenticatedError('Not authorized to access this route')
-    }
-}
-
-module.exports = authenticationMiddleware
+export const checkForTestUser = (req, res, next) => {
+  if (req.user.testUser) throw new BadRequestError("Demo User. Read Only!");
+  next();
+};
