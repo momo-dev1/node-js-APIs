@@ -1,34 +1,107 @@
-const { Schema, model } = require('mongoose')
+import { Schema } from 'mongoose' ;
 
-const ProductSchema = new Schema({
-    name: {
-        type: String,
-        required: [true, 'product name must be provided'],
+const productSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: [3, 'Too short product title'],
+      maxlength: [100, 'Too long product title'],
+    },
+    slug: {
+      type: String,
+      required: true,
+      lowercase: true,
+    },
+    description: {
+      type: String,
+      required: [true, 'Product description is required'],
+      minlength: [20, 'Too short product description'],
+    },
+    quantity: {
+      type: Number,
+      required: [true, 'Product quantity is required'],
+    },
+    sold: {
+      type: Number,
+      default: 0,
     },
     price: {
-        type: Number,
-        required: [true, 'product price must be provided'],
+      type: Number,
+      required: [true, 'Product price is required'],
+      trim: true,
+      max: [200000, 'Too long product price'],
     },
-    rating: {
-        type: Number,
-        default: 4.5
+    priceAfterDiscount: {
+      type: Number,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now()
+    colors: [String],
+
+    imageCover: {
+      type: String,
+      required: [true, 'Product Image cover is required'],
     },
-    featured: {
-        type: Boolean,
-        default: false
+    images: [String],
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Category',
+      required: [true, 'Product must be belong to category'],
     },
-    company: {
-        type: String,
-        enum: {
-            values: ['ikea', 'liddy', 'caressa', 'marcos'],
-            message: '{VALUE} is not supported',
-        }
+    subcategories: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'SubCategory',
+      },
+    ],
+    brand: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Brand',
     },
+    ratingsAverage: {
+      type: Number,
+      min: [1, 'Rating must be above or equal 1.0'],
+      max: [5, 'Rating must be below or equal 5.0'],
+    },
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
+
+// Mongoose query middleware
+productSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'category',
+    select: 'name -_id',
+  });
+  next();
 });
 
+const setImageURL = (doc) => {
+  if (doc.imageCover) {
+    const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
+    doc.imageCover = imageUrl;
+  }
+  if (doc.images) {
+    const imagesList = [];
+    doc.images.forEach((image) => {
+      const imageUrl = `${process.env.BASE_URL}/products/${image}`;
+      imagesList.push(imageUrl);
+    });
+    doc.images = imagesList;
+  }
+};
+// findOne, findAll and update
+productSchema.post('init', (doc) => {
+  setImageURL(doc);
+});
 
-module.exports = model('Product', ProductSchema);
+// create
+productSchema.post('save', (doc) => {
+  setImageURL(doc);
+});
+
+export default model('Product', productSchema);
