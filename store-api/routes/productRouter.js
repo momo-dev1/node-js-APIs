@@ -6,7 +6,7 @@ import {
   createProductValidator,
   updateProductValidator,
   deleteProductValidator,
-} from'../utils/validators/productValidator';
+} from '../utils/validators/productValidator';
 
 import {
   getProducts,
@@ -29,6 +29,7 @@ router
     createProductValidator,
     createProduct
   );
+  
 router
   .route('/:id')
   .get(getProductValidator, getProduct)
@@ -40,4 +41,4 @@ router
   )
   .delete(deleteProductValidator, deleteProduct);
 
-module.exports = router;
+export default router;

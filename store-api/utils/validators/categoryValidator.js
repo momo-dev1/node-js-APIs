@@ -1,13 +1,13 @@
-const slugify = require('slugify');
-const { check, body } = require('express-validator');
-const validatorMiddleware = require('../../middlewares/validatorMiddleware');
+import slugify  from 'slugify';
+import { check, body }  from 'express-validator';
+import validatorMiddleware  from '../../middleware/validatorMiddleware';
 
-exports.getCategoryValidator = [
+export const getCategoryValidator = [
   check('id').isMongoId().withMessage('Invalid category id format'),
   validatorMiddleware,
 ];
 
-exports.createCategoryValidator = [
+export const createCategoryValidator = [
   check('name')
     .notEmpty()
     .withMessage('Category required')
@@ -22,7 +22,7 @@ exports.createCategoryValidator = [
   validatorMiddleware,
 ];
 
-exports.updateCategoryValidator = [
+export const updateCategoryValidator = [
   check('id').isMongoId().withMessage('Invalid category id format'),
   body('name')
     .optional()
@@ -33,7 +33,7 @@ exports.updateCategoryValidator = [
   validatorMiddleware,
 ];
 
-exports.deleteCategoryValidator = [
+export const deleteCategoryValidator = [
   check('id').isMongoId().withMessage('Invalid category id format'),
   validatorMiddleware,
 ];

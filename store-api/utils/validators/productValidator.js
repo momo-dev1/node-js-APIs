@@ -1,10 +1,10 @@
-const slugify = require('slugify');
-const { check, body } = require('express-validator');
-const validatorMiddleware = require('../../middlewares/validatorMiddleware');
-const Category = require('../../models/categoryModel');
-const SubCategory = require('../../models/subCategoryModel');
+import slugify from 'slugify';
+import { check, body } from 'express-validator';
+import validatorMiddleware from '../../middleware/validatorMiddleware';
+import Category from '../../models/Category';
+import SubCategory from '../../models/SubCategory';
 
-exports.createProductValidator = [
+export const createProductValidator = [
   check('title')
     .isLength({ min: 3 })
     .withMessage('must be at least 3 chars')
@@ -119,12 +119,12 @@ exports.createProductValidator = [
   validatorMiddleware,
 ];
 
-exports.getProductValidator = [
+export const getProductValidator = [
   check('id').isMongoId().withMessage('Invalid ID formate'),
   validatorMiddleware,
 ];
 
-exports.updateProductValidator = [
+export const updateProductValidator = [
   check('id').isMongoId().withMessage('Invalid ID formate'),
   body('title')
     .optional()
@@ -135,7 +135,7 @@ exports.updateProductValidator = [
   validatorMiddleware,
 ];
 
-exports.deleteProductValidator = [
+export const deleteProductValidator = [
   check('id').isMongoId().withMessage('Invalid ID formate'),
   validatorMiddleware,
 ];
